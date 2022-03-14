@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 
  Widget defultTextFormField ({
-  required TextEditingController controller,
+   TextEditingController controller,
  // required Function  validator,
-  required TextInputType type,
-  required String label,
-  VoidCallback?  ontap,
+   TextInputType type,
+  String label,
+  VoidCallback  ontap,
   Color BorderSideColor:Colors.indigo,
   Color TextStyleColor:Colors.indigo,
-  required IconData prefixIcon
+   IconData prefixIcon
 })=>TextFormField(
   validator:(value){
-    if(value!.isEmpty)
+    if(value.isEmpty)
       {
         return 'please Enter Text';
       }
@@ -36,6 +36,7 @@ import 'package:flutter/material.dart';
   ),
 
 );
+
 
  Widget BuildTaskItem(Map model)=>Padding(
    padding: const EdgeInsets.only(right: 8,left: 8,top: 8),

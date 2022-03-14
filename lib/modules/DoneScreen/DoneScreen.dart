@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
 class DoneScreen extends StatelessWidget {
-  const DoneScreen({Key? key}) : super(key: key);
+  const DoneScreen({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
