@@ -1,3 +1,4 @@
+import 'package:conditional_builder/conditional_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -12,28 +13,22 @@ class HomeScreen extends StatelessWidget {
  // const ({Key key}) : super(key: key);
 
 
-   Database database;
   var TitleController = TextEditingController();
   var DateController = TextEditingController();
   var TimeController = TextEditingController();
   var StatusController = TextEditingController();
-
   var ScaffoldKey = GlobalKey<ScaffoldState>();
   var FormKey = GlobalKey<FormState>();
-  IconData FloatIcon = Icons.edit;
-  bool IsBottomSheet = false;
-  //List<Map> Tasks=[];
-
-
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-        create:(BuildContext context)=>AppCubit(),
+    return BlocProvider(//.. bt5lny ader acesse 3la ele da5l appcubit
+        create:(BuildContext context)=>AppCubit()..CreatDataBase(),
         child: BlocConsumer<AppCubit,AppStates>(
             listener: (BuildContext context,AppStates state)
             {
-              if(state is InitialAppState) print('intial state');
+             // if(state is InitialAppState) print('intial state');
+              if (state is AppInsertDataBaseState) {Navigator.pop(context);}
             },
             builder: (BuildContext context ,AppStates state) {
               AppCubit cubit = AppCubit.get(context);
@@ -66,27 +61,14 @@ class HomeScreen extends StatelessWidget {
                   elevation: 5,
                   backgroundColor: Color(0xFFEB1555),
                   onPressed: () {
-                    if (IsBottomSheet) {
+                    if (cubit.IsBottomSheet) {
                       if (FormKey.currentState.validate()) {
-                        InsertDataBase(
-                            date: DateController.text,
-                            time: TimeController.text,
-                            title: TitleController.text)
-                            .then((value) {
-                          GetDataFromDataBase(database).then((value) {
-                            Navigator.pop(context);
-                            // setState(() {
-                            //   IsBottomSheet = false;
-                            //   FloatIcon = Icons.edit;
-                            //   Tasks = value;
-                            // });
-                          });
-                        });
+                       cubit.InsertDataBase(date: DateController.text, time: TimeController.text,title: TitleController.text);
+
                       }
                     } else {
                       ScaffoldKey.currentState.showBottomSheet((context) =>
                           Container(
-
                             // decoration: BoxDecoration(
                             color: Color(0xFF1D1E33),
                             //    borderRadius: BorderRadius.circular(4),
@@ -115,10 +97,9 @@ class HomeScreen extends StatelessWidget {
                                           context: context,
                                           initialTime: TimeOfDay.now(),
                                         ).then((dynamic value) {
-                                          // setState(() {
-                                          //   TimeController.text =
-                                          //       value.format(context).toString();
-                                          // });
+
+                                             TimeController.text = value.format(context).toString();
+
                                         });
                                       },
                                       type: TextInputType.datetime,
@@ -140,10 +121,8 @@ class HomeScreen extends StatelessWidget {
                                               lastDate:
                                               DateTime.parse('2022-04-04'))
                                               .then((dynamic value) {
-                                            // setState(() {
-                                            //   DateController.text =
-                                            //       DateFormat.yMMMd().format(value);
-                                            // });
+                                               DateController.text = DateFormat.yMMMd().format(value);
+
                                           });
                                         },
                                         type: TextInputType.datetime,
@@ -162,26 +141,25 @@ class HomeScreen extends StatelessWidget {
 
                           ),
                       ).closed.then((value) {
-                        IsBottomSheet = false;
-                        // setState(() {
-                        //   FloatIcon = Icons.edit;
-                        // });
-                      });
+                        cubit.ChangeBottomSheet(isShow: false, icon: Icons.edit);
 
-                      IsBottomSheet = true;
+                      });
+                      cubit.ChangeBottomSheet(isShow: true, icon: Icons.add);
+                     // IsBottomSheet = true;
                       // setState(() {
                       //   FloatIcon = Icons.add;
                       // });
                     }
                   },
-                  child: Icon(FloatIcon),
+                  child: Icon(cubit.FloatIcon),
                 ),
-                body: true ? const Center(child: CircularProgressIndicator()):cubit.Screen[cubit.CurrentIndex],
-                // body:ConditionalBuilder(
-                //   builder: (context)=> cubit.Screen[cubit.CurrentIndex],
-                //   condition: true,
-                //   fallback:(context)=>  CircularProgressIndicator() ,
-                // ),
+               // body: cubit.Screen[cubit.CurrentIndex],
+                 // state is! AppGetDataBaseLoadingState ?  Center(child: CircularProgressIndicator()): cubit.Screen[cubit.CurrentIndex]
+                body:ConditionalBuilder(
+                  builder: (context)=> cubit.Screen[cubit.CurrentIndex],
+                  condition: state is! AppGetDataBaseLoadingState ,
+                  fallback:(context)=>  CircularProgressIndicator() ,
+                ),
               );
             }
 
@@ -189,47 +167,5 @@ class HomeScreen extends StatelessWidget {
               );
   }
 
-  void CreatDataBase() async {
-    database = await openDatabase(
-      'Todo.db',
-      version: 1,
-      onCreate: (database, version) {
-        print('DataBase Created');
-        database
-            .execute(
-                'CREATE TABLE Tasks (id INTEGER PRIMARY KEY, title TEXT, date TEXT, time TEXT, status TEXT)')
-            .then((value) {
-          print('Table created');
-        }).catchError((error) {
-          print('Error when Create Table ${error.toString()}');
-        });
-      },
-      onOpen: (database) {
-        GetDataFromDataBase(database).then((value) {
-          //   setState(() {
-          Tasks = value;
-          //  });
-        });
-        print('open DataBase');
-      },
-    );
-  }
 
-  Future InsertDataBase({@required title, @required date,@required time}) async {
-    return await database.transaction((txn) async {
-      txn
-          .rawInsert(
-              'INSERT INTO Tasks(title, date, time,status) VALUES("$title"," $date", "$time","New")')
-          .then((value) {
-        print('$value insert succefuly');
-      }).catchError((error) {
-        print('Error when insert new  ${error.toString()}');
-      });
-    });
-  }
-
-  Future<List<Map>> GetDataFromDataBase(database) async {
-    return await database.rawQuery('SELECT * FROM Tasks');
-    print(Tasks);
-  }
 }

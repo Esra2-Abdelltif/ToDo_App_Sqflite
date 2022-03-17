@@ -7,11 +7,11 @@ import 'shared/Bloc/observer_bloc.dart';
 void main() {
   BlocOverrides.runZoned(
         () {
-      // Use blocs...
+          runApp(const MyApp());
     },
     blocObserver: MyBlocObserver(),
   );
-  runApp(const MyApp());
+
 }
 
 class MyApp extends StatelessWidget {

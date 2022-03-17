@@ -1,4 +1,6 @@
+import 'package:conditional_builder/conditional_builder.dart';
 import 'package:flutter/material.dart';
+import 'package:todo_sqflite_bloc_app/shared/Bloc/cubit.dart';
 
  Widget defultTextFormField ({
    TextEditingController controller,
@@ -38,7 +40,7 @@ import 'package:flutter/material.dart';
 );
 
 
- Widget BuildTaskItem(Map model)=>Padding(
+ Widget BuildTaskItem(Map model,context)=>Padding(
    padding: const EdgeInsets.only(right: 8,left: 8,top: 8),
    child: Container(
      height: 120,
@@ -56,20 +58,48 @@ import 'package:flutter/material.dart';
              child: Text('${model['time']}'),
            ),
            SizedBox(width: 22,),
-           Column(
-             crossAxisAlignment: CrossAxisAlignment.start,
-             mainAxisSize: MainAxisSize.min,
-             mainAxisAlignment: MainAxisAlignment.center,
-             children: [
-               Text('${model['title']}',style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.white),),
-               Text('${model['date']}',style: TextStyle(fontSize: 15,color: Colors.grey[400]),),
+           Expanded(
+             child: Column(
+               crossAxisAlignment: CrossAxisAlignment.start,
+               mainAxisSize: MainAxisSize.min,
+               mainAxisAlignment: MainAxisAlignment.center,
+               children: [
+                 Text('${model['title']}',style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.white),),
+                 Text('${model['date']}',style: TextStyle(fontSize: 15,color: Colors.grey[400]),),
 
-             ],
+               ],
+             ),
            ),
+           SizedBox(width: 22,),
+           IconButton(onPressed: (){
+             AppCubit.get(context).UpdateDataBase(id:model['id'],status: 'Done');
+           }, icon:Icon( Icons.check_box,color: Colors.green,)),
+           IconButton(onPressed: (){
+             AppCubit.get(context).UpdateDataBase(id:model['id'],status: 'Archive');
+           }, icon:Icon( Icons.archive,color: Colors.red,)),
+           IconButton(onPressed: (){
+             AppCubit.get(context).DeleteDataBase(id:model['id']);
+           }, icon:Icon( Icons.mode_edit_rounded,color: Colors.red,)),
+
+
 
          ],
        ),
      ),
 
+   ),
+ );
+
+ Widget TaskBuilder({@required Tasks})=>ConditionalBuilder(
+   builder: (context)=>ListView.builder(itemBuilder:(context,index)=> BuildTaskItem(Tasks[index], context),itemCount:Tasks.length,),
+   condition:Tasks.length>0,
+   fallback:(context)=>  Center(
+     child: Column(
+       mainAxisAlignment: MainAxisAlignment.center,
+       children: [
+         Icon( Icons.menu,color: Colors.red,size: 100),
+         Text('No Tasks yet , Please Add Some Tasks',style: TextStyle(color: Colors.white,fontSize: 16)),
+       ],
+     ),
    ),
  );

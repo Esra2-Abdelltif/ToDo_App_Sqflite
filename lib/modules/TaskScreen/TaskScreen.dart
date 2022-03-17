@@ -1,7 +1,10 @@
+import 'package:conditional_builder/conditional_builder.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:todo_sqflite_bloc_app/shared/Bloc/cubit.dart';
+import 'package:todo_sqflite_bloc_app/shared/Bloc/states.dart';
 import 'package:todo_sqflite_bloc_app/shared/Componeds/companed.dart';
-import 'package:todo_sqflite_bloc_app/shared/Constans/constans.dart';
 
 
 class TaskScreen extends StatelessWidget {
@@ -10,8 +13,13 @@ class TaskScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(itemBuilder:(context,index)=> BuildTaskItem(Tasks[index]),itemCount:Tasks.length,);
-    //
+    return BlocConsumer<AppCubit,AppStates>(
+listener: (BuildContext context,AppStates state){},
+    builder: (BuildContext context,AppStates state) {
+      var Tasks= AppCubit.get(context).NewsTasks;
+
+      return TaskBuilder(Tasks: Tasks);
+    });//
 
 
 
