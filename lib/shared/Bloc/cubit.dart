@@ -5,6 +5,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:sqflite/sqlite_api.dart';
 import 'package:todo_sqflite_bloc_app/modules/ArchivedScreen/ArchivedScreen.dart';
 import 'package:todo_sqflite_bloc_app/modules/DoneScreen/DoneScreen.dart';
+import 'package:todo_sqflite_bloc_app/modules/Setting/setting.dart';
 import 'package:todo_sqflite_bloc_app/modules/TaskScreen/TaskScreen.dart';
 import 'package:todo_sqflite_bloc_app/shared/Bloc/states.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,6 +18,8 @@ class AppCubit extends Cubit<AppStates>
   List<Map> NewsTasks=[];
   List<Map> DoneTasks=[];
   List<Map> ArchiveTasks=[];
+  List<Map> setting=[];
+
 
   Database database;
   IconData FloatIcon = Icons.edit;
@@ -26,9 +29,11 @@ class AppCubit extends Cubit<AppStates>
     TaskScreen(),
     DoneScreen(),
     ArchivedScreen(),
+    Setting(),
+
   ];
 
-  List<String> TitleAppBar = ['New Tasks', 'Done', 'New Archived'];
+  List<String> TitleAppBar = ['New Tasks', 'Done', 'New Archived','Setting'];
   void ChangeIndex(int index){
     CurrentIndex=index;
     emit(AppChangeBottomNavBarState());
@@ -66,9 +71,7 @@ class AppCubit extends Cubit<AppStates>
       ).then((value) {
         print('$value insert succefuly');
         emit(AppInsertDataBaseState());
-
         GetDataFromDataBase(database);
-        
       }).catchError((error) {
         print('Error when insert new  ${error.toString()}');
       });
@@ -101,12 +104,12 @@ class AppCubit extends Cubit<AppStates>
      });
 
   }
-  void UpdateDataBase({@required String status ,@required int id})async{
+  void UpdateDataBaseScreen({@required String status ,@required int id})async{
      database.rawUpdate(
         'UPDATE Tasks SET status = ?  WHERE id = ?',
         ['$status', '$id']).then((value) {
           GetDataFromDataBase(database);
-          emit(AppUpdatetDataBaseState());
+          emit(AppUpdatetDataBaseScreenState());
      });
    
   }
@@ -117,7 +120,12 @@ class AppCubit extends Cubit<AppStates>
     });
 
   }
-
+  void deleteAll({@required Database db}) async {
+    database.rawDelete('Delete  from Tasks').then((value) {
+      GetDataFromDataBase(database);
+      emit(AppDeleteAllDataBaseState());
+    });
+  }
   void ChangeBottomSheet({@required bool isShow ,@required IconData icon}){
     IsBottomSheet=isShow;
     FloatIcon=icon;
