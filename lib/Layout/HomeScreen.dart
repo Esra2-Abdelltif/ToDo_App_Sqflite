@@ -2,11 +2,10 @@ import 'package:conditional_builder/conditional_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:todo_sqflite_bloc_app/shared/Bloc/cubit.dart';
 import 'package:todo_sqflite_bloc_app/shared/Bloc/states.dart';
 import 'package:todo_sqflite_bloc_app/shared/Componeds/companed.dart';
-import 'package:todo_sqflite_bloc_app/shared/Constans/constans.dart';
+import 'package:todo_sqflite_bloc_app/shared/Styles/colors.dart';
 
 
 class HomeScreen extends StatelessWidget {
@@ -32,20 +31,23 @@ class HomeScreen extends StatelessWidget {
             builder: (BuildContext context ,AppStates state) {
               AppCubit cubit = AppCubit.get(context);
               return Scaffold(
-                backgroundColor: Color(0xFF031956),
+                backgroundColor: backgroundColor,
                 key: ScaffoldKey,
                 appBar: AppBar(
-                  backgroundColor: Color(0xFF031956), centerTitle: true,
-                  title: Text(cubit.TitleAppBar[cubit.CurrentIndex],),
-                  leading: IconButton(onPressed: (){
-                   // AppCubit.get(context).deleteAll(db:database);
-                  },icon:Icon(Icons.delete),color:  Colors.purple),
+                  elevation: 0,
+                  backgroundColor: backgroundColor, centerTitle: true,
+                  title: Text(cubit.TitleAppBar[cubit.CurrentIndex],style: TextStyle(color:TextColor)),
+              shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(
+              bottom: Radius.circular(20),)),
+
                 ),
                 bottomNavigationBar: BottomNavigationBar(
                   type: BottomNavigationBarType.fixed,
-                  fixedColor: Colors.purple,
+                  fixedColor: PrimaryColor,
                   unselectedItemColor: Color(0xFF8D8E98),
-                  elevation: 5,
+                  backgroundColor: backgroundColor,
+                  elevation: 0,
                   items: const [
                     BottomNavigationBarItem(
                         icon: Icon(Icons.menu), label: 'Tasks'),
@@ -56,7 +58,6 @@ class HomeScreen extends StatelessWidget {
                    BottomNavigationBarItem(
                         icon: Icon(Icons.settings), label: 'Setting'),
                   ],
-                  backgroundColor: Color(0xFF031956),
                   currentIndex: cubit.CurrentIndex,
                   onTap: (index) {
                       cubit.ChangeIndex(index);
@@ -64,7 +65,7 @@ class HomeScreen extends StatelessWidget {
                 ),
                 floatingActionButton: FloatingActionButton(
                   elevation: 5,
-                  backgroundColor: Colors.purple,
+                  backgroundColor: PrimaryColor,
                   onPressed: () {
                     if (cubit.IsBottomSheet) {
                       if (FormKey.currentState.validate()) {
@@ -76,14 +77,10 @@ class HomeScreen extends StatelessWidget {
                     } else {
                       ScaffoldKey.currentState.showBottomSheet((context) =>
                           Container(
-                            decoration: BoxDecoration(
-                            color: Color(0xFF031956),
-                                borderRadius: BorderRadius.circular(7),
-                              ),
+                            color: backgroundColor,
                             child: Padding(
                               padding: const EdgeInsets.all(20.0),
                               child: Container(
-                               // color: Colors.white,
                                 child: Form(
                                   key: FormKey,
                                   child: Column(
@@ -128,7 +125,7 @@ class HomeScreen extends StatelessWidget {
                                                 initialDate: DateTime.now(),
                                                 firstDate: DateTime.now(),
                                                 lastDate:
-                                                DateTime.parse('2022-04-04'))
+                                                DateTime.parse('3000-04-04'))
                                                 .then((dynamic value) {
                                                  DateController.text = DateFormat.yMMMd().format(value);
 
@@ -151,14 +148,14 @@ class HomeScreen extends StatelessWidget {
 
                           ),
                       ).closed.then((value) {
-                        cubit.ChangeBottomSheet(isShow: false, icon: Icons.edit);
+                        cubit.ChangeBottomSheet(isShow: false, icon: (Icons.edit));
 
 
                       });
                       cubit.ChangeBottomSheet(isShow: true, icon: Icons.add);
                     }
                   },
-                  child: Icon(cubit.FloatIcon),
+                  child: Icon(cubit.FloatIcon,color: Colors.grey[400]),
                 ),
 
                  // body: cubit.Screen[cubit.CurrentIndex],

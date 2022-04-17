@@ -18,5 +18,8 @@ class AppChangeBottomNavBarState extends AppStates {}
  class AppInsertDataBaseState extends AppStates {}
  class AppChangeBottomSheetState extends AppStates {}
 
+ class AppUpdatetDataBaseItemState extends AppStates {}
+
+
 
 

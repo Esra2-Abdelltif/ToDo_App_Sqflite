@@ -1,8 +1,11 @@
 import 'package:conditional_builder/conditional_builder.dart';
 import 'package:flutter/material.dart';
+import 'package:todo_sqflite_bloc_app/modules/UpdateScreen/update.dart';
 import 'package:todo_sqflite_bloc_app/shared/Bloc/cubit.dart';
+import 'package:todo_sqflite_bloc_app/shared/Constans/constans.dart';
+import 'package:todo_sqflite_bloc_app/shared/Styles/colors.dart';
 
- Widget defultTextFormField ({TextEditingController controller, TextInputType type, String label, VoidCallback ontap, Color BorderSideColor:Colors.purple, Color TextStyleColor:Colors.purple, IconData prefixIcon})=>TextFormField(
+ Widget defultTextFormField ({TextEditingController controller,TextInputType type,String label,VoidCallback ontap,IconData prefixIcon})=>TextFormField(
   validator:(value){
     if(value.isEmpty)
       {
@@ -11,19 +14,19 @@ import 'package:todo_sqflite_bloc_app/shared/Bloc/cubit.dart';
     return null;
 
   },
-
+   style: TextStyle(color: TextColor),
   controller:controller,
   onTap: ontap,
   keyboardType: type,
   decoration: InputDecoration(
-   fillColor: Colors.white,
+   //fillColor: Colors.white,
     focusedBorder: OutlineInputBorder(
-      borderSide: BorderSide(color: BorderSideColor ),
+      borderSide: BorderSide(color:PrimaryColor, ),
       borderRadius: BorderRadius.circular(25.0),
     ),
     labelText: label,
-    labelStyle: TextStyle(color: TextStyleColor),
-    prefixIcon: Icon(prefixIcon,color: Colors.purple,),
+    labelStyle: TextStyle(color:PrimaryColor,),
+    prefixIcon: Icon(prefixIcon,color:PrimaryColor,),
     border: OutlineInputBorder(),
 
 
@@ -109,14 +112,19 @@ import 'package:todo_sqflite_bloc_app/shared/Bloc/cubit.dart';
  );
 
  Widget TaskBuilder({@required Tasks})=>ConditionalBuilder(
-   builder: (context)=>ListView.builder(itemBuilder:(context,index)=> BuildTaskItem(Tasks[index], context),itemCount:Tasks.length,),
+   builder: (context)=>ListView.builder(itemBuilder:(context,index)=> InkWell(
+     onTap: (){
+       NavigateTo(router:UpdateScreen(id:Tasks[index]['id'],time:Tasks[index]['time'],database:database,date:Tasks[index]['date'],title:Tasks[index]['title'])
+           ,context: context);
+     },
+       child: BuildTaskItem(Tasks[index], context)),itemCount:Tasks.length,),
    condition:Tasks.length>0,
    fallback:(context)=>  Center(
      child: Column(
        mainAxisAlignment: MainAxisAlignment.center,
        children: [
-         Icon( Icons.menu,color:  Colors.purple,size: 100),
-         Text('No Tasks yet , Please Add Some Tasks',style: TextStyle(color: Colors.white,fontSize: 16)),
+         Icon( Icons.menu,color:PrimaryColor,size: 100),
+         Text('No Tasks yet , Please Add Some Tasks',style: TextStyle(color: TextColor,fontSize: 16)),
        ],
      ),
    ),

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo_sqflite_bloc_app/shared/Bloc/cubit.dart';
 import 'package:todo_sqflite_bloc_app/shared/Bloc/states.dart';
 import 'package:todo_sqflite_bloc_app/shared/Constans/constans.dart';
+import 'package:todo_sqflite_bloc_app/shared/Styles/colors.dart';
 
 class Setting extends StatelessWidget {
   const Setting({Key key}) : super(key: key);
@@ -14,7 +15,7 @@ class Setting extends StatelessWidget {
         {
           if (state is AppDeleteAllDataBaseState) {Navigator.pop(context);}
         },
-        builder: (BuildContext context ,AppStates state) {
+        builder: (BuildContext cubitcontext ,AppStates state) {
          // AppCubit cubit = AppCubit.get(context);
           return  Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15.0),
@@ -24,16 +25,16 @@ class Setting extends StatelessWidget {
                 SizedBox(
                   height: 24,
                 ),
-                Text('Setting', style: TextStyle(color: Colors.white,fontSize: 20)
+                Text('General Setting', style: TextStyle(color: Colors.grey[400],fontSize: 16)
                 ),
                 SizedBox(
                   height: 24,
                 ),
                 InkWell(
                   onTap: ()=> showDialog(
-                    context: context,
+                    context: cubitcontext,
                     builder: (BuildContext context) => AlertDialog(
-                      title: const Text('Delete All Item'),
+                      title: const Text('Delete All Items'),
                       content: const Text('Do You sure ?'),
                       actions: [
                         TextButton(
@@ -42,9 +43,7 @@ class Setting extends StatelessWidget {
                         ),
                         TextButton(
                           onPressed: () {
-                            //BlocProvider.of<AppCubit>(context).deleteAll(db: database);
-                           AppCubit.get(context).deleteAll(db:database);
-                            Navigator.pop(context);
+                           AppCubit.get(cubitcontext).deleteAll(db:database);
                           },
                           child: const Text('OK'),
                         ),
@@ -60,24 +59,50 @@ class Setting extends StatelessWidget {
                         width: 35,
                         height: 35,
                         decoration: BoxDecoration(
-                          color: Colors.purple,
+                          color: PrimaryColor,
                           borderRadius: BorderRadius.circular(7),
                         ),
                         child: Icon(
                           Icons.delete_forever,
-                          color: Colors.white,
-                          size: 17,
+                          color: Colors.grey[400],
+                          size: 22,
                         ),
                       ),
                       SizedBox(
                         width: 10,
                       ),
-                      Text('Delete All', style: TextStyle(color: Colors.white,fontSize: 16)),
+                      Text('Delete All', style: TextStyle(color: TextColor,fontSize: 16)),
 
 
                     ],
                   ),
                 ),
+                SizedBox(
+                  height: 24,
+                ),
+                // Row(
+                //   children: [
+                //     Container(
+                //       width: 35,
+                //       height: 35,
+                //       decoration: BoxDecoration(
+                //         color: PrimaryColor,
+                //         borderRadius: BorderRadius.circular(7),
+                //       ),
+                //       child: Icon(
+                //         Icons.brightness_2_outlined,
+                //         color: Colors.grey[400],
+                //         size: 22,
+                //       ),
+                //     ),
+                //     SizedBox(
+                //       width: 10,
+                //     ),
+                //     Text('Dark Mode', style: TextStyle(color: TextColor,fontSize: 16)),
+                //
+                //
+                //   ],
+                // ),
               ],
             ),
           );

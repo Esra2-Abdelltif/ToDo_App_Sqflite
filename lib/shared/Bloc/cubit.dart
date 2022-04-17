@@ -105,7 +105,8 @@ class AppCubit extends Cubit<AppStates>
 
   }
   void UpdateDataBaseScreen({@required String status ,@required int id})async{
-     database.rawUpdate(
+    emit(AppUpdatetDataBaseScreenState());
+    database.rawUpdate(
         'UPDATE Tasks SET status = ?  WHERE id = ?',
         ['$status', '$id']).then((value) {
           GetDataFromDataBase(database);
@@ -130,6 +131,15 @@ class AppCubit extends Cubit<AppStates>
     IsBottomSheet=isShow;
     FloatIcon=icon;
     emit(AppChangeBottomSheetState());
+  }
+  void UpdateDataBaseitem({@required database,@required title, @required date,@required time,@required int id})async{
+    database.rawUpdate(
+        'UPDATE Tasks SET title=? , date = ?, time = ?, WHERE id = ?',
+        ['$title', '$date','$time','$id']).then((value) {
+      GetDataFromDataBase(database);
+      emit(AppUpdatetDataBaseItemState());
+    });
+
   }
 
 
